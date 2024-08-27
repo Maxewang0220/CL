@@ -5,8 +5,10 @@ from nltk.util import ngrams
 def ml_estimator(freqdist):
     return MLEProbDist(freqdist)
 
+
 def goodturing_estimator(freqdist):
     return SimpleGoodTuringProbDist(freqdist)
+
 
 class BasicNgram(ConditionalProbDist):
     """
@@ -33,39 +35,39 @@ class BasicNgram(ConditionalProbDist):
     other parameters are optional and may be omitted. They define whether to add artificial symbols before or after the word list, 
     and whether to use another estimation methods than maximum likelihood.
     """
-    def __init__(self, n, words, start_symbol="<$>", end_symbol="</$>", pad_left=True, pad_right=False, estimator=ml_estimator):
+
+    def __init__(self, n, words, start_symbol="<$>", end_symbol="</$>", pad_left=True, pad_right=False,
+                 estimator=ml_estimator):
         assert (n > 0)
-        self._n=n
-        self._words=words
-        self._counter=ConditionalFreqDist()
-        self._start_symbol=start_symbol
-        self._end_symbol=end_symbol
-        self._pad_left=pad_left
-        self._pad_right=pad_right
+        self._n = n
+        self._words = words
+        self._counter = ConditionalFreqDist()
+        self._start_symbol = start_symbol
+        self._end_symbol = end_symbol
+        self._pad_left = pad_left
+        self._pad_right = pad_right
         self._train()
         super().__init__(self._counter, estimator)
-        
-        
-    def _train(self):       
-        _ngrams=self.generate_ngrams()        
+
+    def _train(self):
+        _ngrams = self.generate_ngrams()
         for ngram in _ngrams:
-            context=ngram[0:-1]
-            outcome=ngram[-1]
-            self._counter[context][outcome]+=1
-            
+            context = ngram[0:-1]
+            outcome = ngram[-1]
+            self._counter[context][outcome] += 1
+
     """
     returns an iterable over the ngrams of the word corpus
     """
+
     def generate_ngrams(self):
         return ngrams(self._words, self._n, self._pad_left, self._pad_right,
                       left_pad_symbol=self._start_symbol,
                       right_pad_symbol=self._end_symbol)
 
-
     """                                                                                                                                                                                                                                                                                                                                                               
     Return the list of contexts                                                                                                                                                                                                                                                                                                                                       
     """
+
     def contexts(self):
         return list(self.conditions())
-            
-        
