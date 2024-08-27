@@ -71,3 +71,7 @@ class BasicNgram(ConditionalProbDist):
 
     def contexts(self):
         return list(self.conditions())
+
+
+if __name__ == "__main__":
+    pass
