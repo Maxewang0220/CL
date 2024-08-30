@@ -2,7 +2,7 @@ import conllu
 from conllu import parse_incr
 
 
-class CorpusReader:
+class CorpusHandler:
     reader = None
 
     def __init__(self, file_path):
@@ -15,11 +15,9 @@ class CorpusReader:
 
         return reader
 
-
-class CorpusWriter:
-    pass
+    def write_corpus(self):
+        pass
 
 
 if __name__ == "__main__":
     corpusReader = CorpusReader("./data/de_gsd-ud-dev.conllu")
-    
