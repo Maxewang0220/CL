@@ -10,8 +10,11 @@ def viterbi(init_prob: dict, transition_prob: dict, emission_prob: dict, input_s
     v = dict()
 
     for state in init_prob:
-        v[state] = init_prob[state] * emission_prob[state][input_sequence[0]]
-
+        if input_sequence[0] in emission_prob[state]:
+            v[state] = init_prob[state] * emission_prob[state][input_sequence[0]]
+        else:
+            v[state] = 0
+            
     # # store the first v
     v_list.append(v)
 
