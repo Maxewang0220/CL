@@ -1,8 +1,6 @@
 import conllu
 from conllu import parse_incr
-from nltk import accuracy
-from pycparser.ply.yacc import token
-
+import matplotlib.pyplot as plt
 from viterbi import viterbi
 
 
@@ -141,13 +139,26 @@ class CorpusHandler:
 if __name__ == "__main__":
     corpusHandler = CorpusHandler("./data/de_gsd-ud-train.conllu")
 
-    init_prob, transition_prob, emission_prob = corpusHandler.train_on_corpus(500)
-    print("test accruacy", corpusHandler.predict('./data/de_gsd-ud-test.conllu'))
-    print("dev accruacy", corpusHandler.predict('./data/de_gsd-ud-dev.conllu'))
+    test_accuracies = []
+    dev_accuracies = []
 
-    init_prob, transition_prob, emission_prob = corpusHandler.train_on_corpus(2000)
-    print("test accruacy", corpusHandler.predict('./data/de_gsd-ud-test.conllu'))
-    print("dev accruacy", corpusHandler.predict('./data/de_gsd-ud-dev.conllu'))
+    for init_sentence_num in range(500, 14500, 500):
+        init_prob, transition_prob, emission_prob = corpusHandler.train_on_corpus(init_sentence_num)
+        test_accuracy = corpusHandler.predict('./data/de_gsd-ud-test.conllu')
+        dev_accuracy = corpusHandler.predict('./data/de_gsd-ud-dev.conllu')
+        print("test accruacy", test_accuracy)
+        print("dev accruacy", dev_accuracy)
+        test_accuracies.append(test_accuracy)
+        dev_accuracies.append(dev_accuracy)
+
+    # # show the accuracy-train data size plot
+    plt.plot(range(500, 14500, 500), test_accuracies, label='Test Accuracy')
+    plt.plot(range(500, 14500, 500), dev_accuracies, label='Dev Accuracy')
+    plt.xlabel('Training Data Size')
+    plt.ylabel('Accuracy')
+    plt.title('Accuracy-Training Data Size')
+    plt.legend()
+    plt.show()
 
     # # test if init prob/ transition prob/ emission prob is correct
     # print(init_prob)
