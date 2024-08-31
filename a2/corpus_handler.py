@@ -1,5 +1,6 @@
 import conllu
 from conllu import parse_incr
+from viterbi import viterbi
 
 
 class CorpusHandler:
@@ -81,25 +82,42 @@ class CorpusHandler:
         # # calculate transition prob
         for last_pos in transition_count:
             transition_prob[last_pos] = dict()
-            for current_pos in transition_count[last_pos]:
+            for current_pos in init_prob:
                 # # add smoothing
-                # transition_prob[last_pos][current_pos] = (transition_count[last_pos][current_pos] + 1) / (
-                #         pos_count[last_pos] + len(pos_count))
-                transition_prob[last_pos][current_pos] = (transition_count[last_pos][current_pos]) / (
-                    pos_count[last_pos])
+                if current_pos not in transition_count[last_pos]:
+                    transition_prob[last_pos][current_pos] = 1 / (pos_count[last_pos] + len(init_prob))
+                else:
+                    transition_prob[last_pos][current_pos] = (transition_count[last_pos][current_pos] + 1) / (
+                            pos_count[last_pos] + len(init_prob))
 
         # # calculate emission prob
         for pos in emission_count:
             emission_prob[pos] = dict()
             for word in emission_count[pos]:
                 # # add smoothing
-                emission_prob[pos][word] = (emission_count[pos][word] + 1) / (pos_count[pos] + len(pos_count))
+                emission_prob[pos][word] = (emission_count[pos][word] + 1) / (pos_count[pos] + len(emission_count[pos]))
 
         return init_prob, transition_prob, emission_prob
 
 
 if __name__ == "__main__":
-    corpusReader = CorpusHandler("./data/de_gsd-ud-test.conllu")
+    corpusReader = CorpusHandler("./data/de_gsd-ud-dev.conllu")
     init_prob, transition_prob, emission_prob = corpusReader.train_on_corpus()
     print(init_prob)
     print(transition_prob)
+
+    print(viterbi(init_prob, transition_prob, emission_prob,
+                  ['Der', 'Hauptgang', 'war', 'in', 'Ordnung', ',', 'aber', 'alles', 'andere', 'als', 'umwerfend',
+                   '.']))
+
+    print(viterbi(init_prob, transition_prob, emission_prob,
+                  ['Anders', 'kann', 'ich', 'es', 'nicht', 'ausdrücken', '.', ]))
+
+    print(viterbi(init_prob, transition_prob, emission_prob,
+                  ['Bester',
+                   'Kaffee',
+                   'im',
+                   'Veedel',
+                   'sowieso',
+                   '.']
+                  ))

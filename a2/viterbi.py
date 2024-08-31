@@ -9,8 +9,19 @@ def viterbi(init_prob: dict, transition_prob: dict, emission_prob: dict, input_s
     # # calculate init probs
     v = dict()
 
+    # # check if the word exists
+    occur_flag = False
     for state in init_prob:
-        v[state] = init_prob[state] * emission_prob[state][input_sequence[0]]
+        if input_sequence[0] not in emission_prob[state]:
+            v[state] = 0
+        else:
+            occur_flag = True
+            v[state] = init_prob[state] * emission_prob[state][input_sequence[0]]
+
+    # # if the word doesn't exist ignore its emission prob
+    if not occur_flag:
+        for state in v:
+            v[state] = init_prob[state]
 
     # # store the first v
     v_list.append(v)
@@ -21,6 +32,19 @@ def viterbi(init_prob: dict, transition_prob: dict, emission_prob: dict, input_s
         last_v = v_list[-1]
         obs = input_sequence[i]
         back_pointer = {}
+
+        # # check word
+        occur_flag = False
+        for current_state in init_prob:
+            if obs not in emission_prob[current_state]:
+                emission_prob[current_state][obs] = 0
+            else:
+                occur_flag = True
+
+        # # 1 for all state
+        if not occur_flag:
+            for current_state in init_prob:
+                emission_prob[current_state][obs] = 1
 
         for current_state in init_prob:
             v[current_state], back_pointer[current_state] = max(
