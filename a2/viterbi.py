@@ -83,3 +83,12 @@ if __name__ == "__main__":
     print(input_sequence1, viterbi(test_init_prob, test_transition_prob, test_emission_prob, input_sequence1))
     print(input_sequence2, viterbi(test_init_prob, test_transition_prob, test_emission_prob, input_sequence2))
     print(input_sequence3, viterbi(test_init_prob, test_transition_prob, test_emission_prob, input_sequence3))
+
+    test_init_prob = {'DT': 0.8, 'NN': 0.2, 'VB': 0}
+    test_transition_prob = {"DT": {"DT": 0, "NN": 0.9, "VB": 0.1}, "NN": {"DT": 0, "NN": 0.5, "VB": 0.5},
+                            "VB": {"DT": 0.5, "NN": 0.5, "VB": 0}}
+    test_emission_prob = {"DT": {"the": 0.2, "fans": 0, "watch": 0, "race": 0},
+                          "NN": {"the": 0, "fans": 0.1, "watch": 0.3, "race": 0.1},
+                          "VB": {"the": 0, "fans": 0.2, "watch": 0.15, "race": 0.3}}
+    input_sequence4 = ["the", "fans", "watch", "the", "race"]
+    print(input_sequence4, viterbi(test_init_prob, test_transition_prob, test_emission_prob, input_sequence4))
