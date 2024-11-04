@@ -1,0 +1,36 @@
+# README
+
+## Author
+
+Wang Entang
+
+## Directory structure
+
+.
+│  junglebook.txt
+│  kingjamesbible_tokenized.txt
+│  p1.ipynb
+│  p2.ipynb
+│  p3.ipynb
+│  p1.html
+│  p2.html
+│  p3.html
+│  README
+│
+└─setimes
+        SETIMES.bg-tr.bg
+        SETIMES.bg-tr.tr
+
+## Versions
+
+Python: 3.11
+NLTK: 3.9.1
+matplotlib: 3.9.2
+
+## Runtime
+
+1 Zipf's Law: <10s
+2 Random Text Generation: <5s
+3 Statistical Dependence: <1s
+
+
