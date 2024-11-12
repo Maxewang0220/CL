@@ -1,15 +1,25 @@
-# # viterbi algorithm
+# viterbi algorithm
 def viterbi(init_prob: dict, transition_prob: dict, emission_prob: dict, input_sequence: list):
+    """
+    :param init_prob: Dict of initial probabilities for each state (contains every state)
+    :param transition_prob: Dict of transition probabilities between states
+    :param emission_prob: Dict of emission probabilities for each state-observation pair
+    :param input_sequence: List of observations
+    :return: The maximum likelihood and the best path sequence list
+    """
+
+    # check if the input sequence is empty
     if len(input_sequence) < 1:
         return None
 
+    # create lists to store the v and back pointer
     back_pointer_list = []
     v_list = []
 
-    # # calculate init probs
+    # calculate init probs
     v = dict()
 
-    # # check if the word exists
+    # check if the word exists
     occur_flag = False
     for state in init_prob:
         if input_sequence[0] not in emission_prob[state]:
@@ -18,7 +28,7 @@ def viterbi(init_prob: dict, transition_prob: dict, emission_prob: dict, input_s
             occur_flag = True
             v[state] = init_prob[state] * emission_prob[state][input_sequence[0]]
 
-    # # if the word doesn't exist ignore its emission prob
+    # if the word doesn't exist then ignore its emission prob
     if not occur_flag:
         for state in v:
             v[state] = init_prob[state]
@@ -26,14 +36,14 @@ def viterbi(init_prob: dict, transition_prob: dict, emission_prob: dict, input_s
     # # store the first v
     v_list.append(v)
 
-    # # iteratively calculate the other v of the sequence
+    # iteratively calculate the other v of the sequence
     for i in range(1, len(input_sequence)):
         v = dict()
         last_v = v_list[-1]
         obs = input_sequence[i]
         back_pointer = {}
 
-        # # check word
+        # check word
         occur_flag = False
         for current_state in init_prob:
             if obs not in emission_prob[current_state]:
@@ -41,7 +51,7 @@ def viterbi(init_prob: dict, transition_prob: dict, emission_prob: dict, input_s
             else:
                 occur_flag = True
 
-        # # 1 for all state
+        # set prob = 1 for all state
         if not occur_flag:
             for current_state in init_prob:
                 emission_prob[current_state][obs] = 1
@@ -52,11 +62,11 @@ def viterbi(init_prob: dict, transition_prob: dict, emission_prob: dict, input_s
                  emission_prob[current_state][obs], last_state) for last_state in
                 init_prob)
 
-        # # store current v and back pointer
+        # store current v and back pointer
         v_list.append(v)
         back_pointer_list.append(back_pointer)
 
-    # # reconstruct the best path sequence
+    # reconstruct the best path sequence
     best_path = []
     max_likelihood, last_state = max((v_list[-1][state], state) for state in init_prob)
     best_path.append(last_state)
@@ -71,7 +81,7 @@ def viterbi(init_prob: dict, transition_prob: dict, emission_prob: dict, input_s
 
 
 if __name__ == "__main__":
-    # # test viterbi alg
+    # test viterbi alg
     test_init_prob = {"H": 0.8, "C": 0.2}
     test_transition_prob = {"H": {"H": 0.7, "C": 0.3}, "C": {"H": 0.4, "C": 0.6}}
     test_emission_prob = {"H": {"1": 0.2, "2": 0.4, "3": 0.4}, "C": {"1": 0.5, "2": 0.4, "3": 0.1}}

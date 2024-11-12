@@ -1,0 +1,24 @@
+# README
+
+## Author
+
+Wang Entang
+
+## Directory structure
+
+.
+│ corpus_handler.py
+│ evaluation_result.png
+│ README.md
+│ viterbi.py
+│   
+└─data
+    de_gsd-ud-dev.conllu
+    de_gsd-ud-test.conllu
+    de_gsd-ud-train.conllu
+
+## Versions
+
+Python: 3.11
+NLTK: 3.9.1
+matplotlib: 3.9.2
