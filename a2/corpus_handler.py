@@ -1,7 +1,9 @@
-import conllu
+import numpy as np
 from conllu import parse_incr
 import matplotlib.pyplot as plt
 from viterbi import viterbi
+import time
+from scipy.interpolate import interp1d
 
 
 # process the corpus and train the HMM model
@@ -139,6 +141,36 @@ class CorpusHandler:
 
         return accuracy
 
+    # Extra: show the speed vs. sentence length curve
+    def predict_time(self, evaluate_file_path_list):
+
+        sentence_time_cost = [0] * 150
+        sentence_length_count = [0] * 150
+
+        for evaluate_file_path in evaluate_file_path_list:
+            # open evaluation corpus file and predict pos
+            with open(evaluate_file_path, 'r', encoding='utf-8') as file:
+                reader = parse_incr(file)
+                for sentence in reader:
+                    # predict token pos
+                    token_list = [token['form'] for token in sentence]
+                    sentence_length = len(sentence)
+
+                    # time count
+                    strart_time = time.time()
+                    _, pos_list = viterbi(self.init_prob, self.transition_prob, self.emission_prob, token_list)
+                    finish_time = time.time()
+
+                    # save the time cost
+                    sentence_time_cost[sentence_length] += finish_time - strart_time
+                    sentence_length_count[sentence_length] += 1
+
+        # calculate average time cost
+        time_length = [sentence_time_cost[sentence_length] * 1000 / sentence_length_count[sentence_length]
+                       if sentence_length_count[sentence_length] != 0 else None for sentence_length in range(150)]
+
+        return time_length
+
 
 if __name__ == "__main__":
     # define file path
@@ -151,7 +183,11 @@ if __name__ == "__main__":
     test_accuracies = []
     dev_accuracies = []
 
-    for init_sentence_num in range(500, 14500, 500):
+    # change this variable to adjust the increment of training data size
+    size_increment = 500
+
+    time1 = time.time()
+    for init_sentence_num in range(500, 14500, size_increment):
         init_prob, transition_prob, emission_prob = corpusHandler.train_on_corpus(init_sentence_num)
         test_accuracy = corpusHandler.predict(DE_GSD_TEST)
         dev_accuracy = corpusHandler.predict(DE_SGD_DEV)
@@ -160,13 +196,37 @@ if __name__ == "__main__":
         test_accuracies.append(test_accuracy)
         dev_accuracies.append(dev_accuracy)
 
-    # show the accuracy-train data size plot
-    plt.plot(range(500, 14500, 500), test_accuracies, label='Test Accuracy')
-    plt.plot(range(500, 14500, 500), dev_accuracies, label='Dev Accuracy')
+    # Extra: show the accuracy-train data size plot
+    plt.plot(range(500, 14500, size_increment), test_accuracies, label='Test Accuracy')
+    plt.plot(range(500, 14500, size_increment), dev_accuracies, label='Dev Accuracy')
     plt.xlabel('Training Data Size')
     plt.ylabel('Accuracy')
     plt.title('Accuracy-Training Data Size')
     plt.legend()
+    plt.show()
+
+    print(time.time() - time1)
+
+    # Extra: show the speed vs. sentence length curve
+    time_length = corpusHandler.predict_time([DE_GSD_TRAIN, DE_GSD_TEST, DE_SGD_DEV])
+    # get the index and value of non-None values
+    x = [i for i, value in enumerate(time_length) if value is not None]
+    y = [value for value in time_length if value is not None]
+
+    # generate interpolation function (cubic spline interpolation)
+    interpolator = interp1d(x, y, kind='cubic')
+
+    # generate more dense points for smooth curve
+    x_new = np.linspace(min(x), max(x), num=100)
+    y_smooth = interpolator(x_new)
+
+    # show the curve
+    plt.plot(x_new, y_smooth, label="Smooth Curve")
+    plt.scatter(x, y, color="red", label="Original Points")  # 用红点标出原始数据点
+    plt.xlabel("Sentence Length")
+    plt.ylabel("Time Cost")
+    plt.legend()
+    plt.title("Speed vs. Sentence Length Curve")
     plt.show()
 
     # # test if init prob/ transition prob/ emission prob is correct

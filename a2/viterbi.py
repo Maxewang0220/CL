@@ -52,7 +52,6 @@ def viterbi(init_prob: dict, transition_prob: dict, emission_prob: dict, input_s
                 occur_flag = True
 
         # set emission_prob = 1 for all states if the word is unknown
-        # TODO回退平滑 使用更好的未知词处理方法 借助上一个词的转移概率来计算未知词的词性
         if not occur_flag:
             for current_state in init_prob:
                 emission_prob[current_state][obs] = 1

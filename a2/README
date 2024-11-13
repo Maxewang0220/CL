@@ -9,6 +9,7 @@ Wang Entang
 .
 │ corpus_handler.py
 │ evaluation_result.png
+│ speed_length_curve.png
 │ README.md
 │ viterbi.py
 │   
@@ -22,3 +23,15 @@ Wang Entang
 Python: 3.11
 NLTK: 3.9.1
 matplotlib: 3.9.2
+numpy: 1.26.4
+scipy: 1.14.1
+
+## Runtime
+Run on i9-13900HX CPU.
+Train and plot the accuracy-train data size cost 66.53s. (Size increment = 500 from 500 to 14500)
+Train and plot the accuracy-train data size cost 33.07s. (Size increment = 1000 from 500 to 14500)
+Plot the speed vs length curve cost 14.57s.
+
+## Additional Features
+I realize plotting a learning curve for the tagger (accuracy as a function of training data size) and
+plotting a speed vs. sentence length curve. The code is in the corpus_handler.py file and marked with '# Extra'.
