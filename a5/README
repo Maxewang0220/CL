@@ -1,0 +1,49 @@
+# README
+
+## Author
+
+Wang Entang
+
+## Directory structure
+
+.
+│   dependency_parsing.ipynb
+│   README
+│   dependency_parsing.html
+│
+└───figures
+        head_tagging_accuracy.png
+        train_loss.png
+        UAS.png
+        valid_loss.png
+
+
+## Versions
+
+Python: 3.11
+torch: 2.4.0+cu124
+datasets: 3.1.0
+transformers: 4.24.0
+ufal.chu_liu_edmonds: 1.0.3
+wandb: 0.19.2
+
+
+## Runtime
+Run on i9-13900HX CPU + RTX4060 GPU.
+train base model for 10 epochs takes 15m.
+train pro model for 15 epochs takes 30m.
+
+## Instructions for running
+I’ve uploaded a base model for reference. If you want to test the model performance directly, you can just run the second last cell to see the result.
+
+To download the model, you can visit this link: https://drive.google.com/file/d/1lH_1P7g_yVIshdmb0UaX9JdKNjvdxwRA/view?usp=sharing
+
+## Additional Features
+
+- I implemented a better RoBERTa + FFN model with residual construction to do dependency parsing task and this shows effective and improves the accuracy.
+
+- I tried several hyperparameters combination to improve the training result and use valid loss verification to prevent the model from over-fitting.
+
+- I realized predicting edge labels and computing labeled attachment scores (LAS). I used a mixed loss function to train the label prediction and edge prediction simultaneously.
+
+All these features are notified with "# Extra" in the code.
